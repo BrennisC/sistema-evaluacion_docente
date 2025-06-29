@@ -88,16 +88,16 @@ WSGI_APPLICATION = "sed.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Check if we have a DATABASE_URL environment variable (used in Docker)
-DATABASE_URL = os.environ.get("DATABASE_URL")
+# DATABASE_URL = os.environ.get("DATABASE_URL")
 
-if DATABASE_URL:
-    # Use the DATABASE_URL from environment
-    DATABASES = {
-        "default": dj_database_url.parse(DATABASE_URL)
-    }
-else:
+# if DATABASE_URL:
+#     # Use the DATABASE_URL from environment
+#     DATABASES = {
+#         "default": dj_database_url.parse(DATABASE_URL)
+#     }
+# else:
     # Use the local database configuration
-    DATABASES = {
+DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
             "NAME": "test",
