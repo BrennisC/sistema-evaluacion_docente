@@ -2,6 +2,7 @@ from pathlib import Path
 from decouple import config
 import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,6 +49,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "sed.urls"
@@ -74,16 +76,12 @@ WSGI_APPLICATION = "sed.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT"),
-    }
+    "default": dj_database_url.config(
+        # Replace this value with your local database's connection string.
+        default="postgresql://postgres:postgres@localhost:5432/sistema_evaluacion",
+        conn_max_age=600,
+    )
 }
-
 # para poder ver el tiempo de respuesta de la base de datos
 DEVSERVER_MODULES = [
     "devserver.modules.sql.SQLRealTimeModule",  # Muestra consultas SQL en tiempo real
@@ -128,7 +126,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+
+STATIC_URL = "/static/"
+
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
