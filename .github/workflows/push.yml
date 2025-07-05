@@ -27,5 +27,5 @@ jobs:
           context: .
           push: true
           tags: |
-            brenniscastro/hola_mundo:latest
-            brenniscastro/hola_mundo:${{ github.sha }}
+            brenniscastro/sed:latest
+            brenniscastro/sed:${{ github.sha }}
