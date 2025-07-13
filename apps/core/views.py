@@ -1,33 +1,34 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.contrib.auth import authenticate, login, logout
 from apps.usuarios.models import Usuario
 
 
+from django.views.decorators.csrf import ensure_csrf_cookie
+
+
+@ensure_csrf_cookie
 def login_view(request):
-    
     if request.method == "POST":
         correo = request.POST.get("correo")
         password = request.POST.get("password")
 
-        print(f"Correo recibido: {correo}")
-        print(f"Password recibido: {password}")
-
-        error = None  # Inicializa el error
+        error = None
         try:
-
+            # Primero verificamos si existe el usuario
             usuario = Usuario.objects.get(correo=correo)
-            print(f"Usuario encontrado: {usuario}")
-            print(f"Usuario ID: {usuario.password}")
-            print(f"Usuario Rol: {type(usuario.rol)} {usuario.rol}")
-            if usuario.password == password:
+            # Usamos authenticate con correo
+            user = authenticate(request, correo=correo, password=password)
+
+            if user is not None:
                 # Login exitoso
-                print(f"Usuario ID: {usuario.id}")
+                login(request, user)  # Iniciamos la sesión del usuario
 
                 if str(usuario.rol) == "comision":
                     url = reverse(
                         "comision:bienvenida_comision",
-                        kwargs={"usuario_id": usuario.id },
+                        kwargs={"usuario_id": usuario.id},
                     )
                     return redirect(url)
                 elif str(usuario.rol) == "profesor":
@@ -41,8 +42,6 @@ def login_view(request):
                         "alumno:bienvenida_alumno",
                         kwargs={"usuario_id": usuario.id},
                     )
-                    
-
                     return redirect(url)
                 else:
                     error = "Rol no reconocido. Contacta con el administrador."
@@ -59,14 +58,8 @@ def login_view(request):
 
 
 def logout_view(request):
-    print("Cerrando sesión")
-    # Aquí deberías implementar la lógica para cerrar sesión
-    # Por ejemplo, limpiar la sesión del usuario
-    request.session.flush()  # Limpia la sesión actual
-    print("Sesión cerrada correctamente")
-    # Puedes redirigir a una página de inicio o login después de cerrar sesión
-    return redirect("core:dashboard")  # Redirige a la página de login o inicio
-
+    logout(request)  # Usamos la función logout de Django
+    return redirect("core:dashboard")
 
 
 def dashboard_view(request):
