@@ -1,5 +1,4 @@
 from django.db import models
-
 import uuid
 
 
@@ -22,7 +21,13 @@ class Rol(models.Model):
             (ModosRoles.ALUMNO, ModosRoles.ALUMNO),
         ],
     )
-    permisos = models.JSONField()
+    permisos = models.JSONField(
+        default=dict, blank=True
+    )  # Campo para permisos como JSON
 
     def __str__(self):
         return self.nombre
+
+    class Meta:
+        verbose_name = "Rol"
+        verbose_name_plural = "Roles"

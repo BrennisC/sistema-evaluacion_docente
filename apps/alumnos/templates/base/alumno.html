@@ -87,7 +87,8 @@
             >
               <i class="fas fa-user"></i>
               <span>Perfil</span>
-            </a>            <a
+            </a>
+            <a
               href="{% url 'alumno:evaluaciones' usuario_id=usuario_id %}"
               class="nav-link flex items-center gap-2"
             >
@@ -118,6 +119,7 @@
             <!-- Notificaciones -->
             <button
               class="p-2 rounded-full hover:bg-primary-dark dark:hover:bg-gray-700 transition-colors duration-200 relative"
+              onclick="cargarModal()"
             >
               <i class="fas fa-bell"></i>
               <span
@@ -125,6 +127,8 @@
                 >2</span
               >
             </button>
+
+            <div id="contenedor-modal"></div>
 
             <!-- Menú de usuario -->
             <div class="relative group">
@@ -221,7 +225,8 @@
             >
               <i class="fas fa-user"></i>
               <span>Perfil</span>
-            </a>            <a
+            </a>
+            <a
               href="{% url 'alumno:evaluaciones' usuario_id=usuario_id %}"
               class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
             >
@@ -268,14 +273,6 @@
       </div>
       {% endif %} {% block content %}{% endblock %}
     </main>
-
-    <!-- Loader -->
-    <div id="loaderOverlay" class="loader-overlay">
-      <div class="loader-content">
-        <div class="loader loader-pulse"></div>
-        <div class="loader-text">Cargando...</div>
-      </div>
-    </div>
 
     <style>
       /* Estilos para los enlaces de navegación */
@@ -450,6 +447,21 @@
             }
        });
        */
+      function cargarModal() {
+        const contenedorModal = document.getElementById("contenedor-modal");
+
+        fetch("notifiicaciones/obtener/<uuid:usuario_id>/ ")
+          .then((response) => response.text())
+          .then((html) => {
+            contenedorModal.innerHTML = html;
+            // Aquí puedes agregar más lógica si es necesario
+          })
+          .catch((error) => {
+            console.error("Error al cargar el modal:", error);
+            contenedorModal.innerHTML =
+              "<p>Error al cargar las notificaciones.</p>";
+          });
+      }
     </script>
   </body>
 </html>
